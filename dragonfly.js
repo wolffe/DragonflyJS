@@ -5,7 +5,7 @@
 /* global console */
 
 /*
- * DragonflyJS - v1.0.0 - 2018-05-29
+ * DragonflyJS - v1.0.1 - 2018-05-29
  * https://getbutterfly.com/dragonflyjs-vanilla-javascript-drag-and-drop/
  * Copyright (c) 2018 Ciprian Popescu
  * Licensed GPLv3
@@ -16,7 +16,6 @@
  * if (iMouseDown && !lMouseState) {} // button clicked
  * if (!iMouseDown && lMouseState) {} // button released
  */
-var mouseOffset = null;
 var iMouseDown  = false;
 var lMouseState = false;
 var dragObject  = null;
@@ -24,10 +23,8 @@ var dragObject  = null;
 var DragDrops   = [];
 var curTarget   = null;
 var lastTarget  = null;
-var dragHelper  = null;
 var rootParent  = null;
 var rootSibling = null;
-
 
 Number.prototype.NaN0 = function () {
     'use strict';
@@ -88,20 +85,6 @@ function mouseCoords(ev) {
 	};
 }
 
-function getMouseOffset(target, ev) {
-    'use strict';
-
-    ev = ev || window.event;
-
-	var docPos = getPosition(target),
-        mousePos = mouseCoords(ev);
-
-    return {
-        x: mousePos.x - docPos.x,
-        y: mousePos.y - docPos.y
-    };
-}
-
 function mouseMove(ev) {
     'use strict';
 
@@ -112,6 +95,8 @@ function mouseMove(ev) {
      * Firefox uses event.target here, MSIE uses event.srcElement
      */
     var elementInstance,
+        dragHelper = document.querySelector('.drag-helper'),
+        activeCont = null,
         target = ev.target || ev.srcElement,
         mousePos = mouseCoords(ev),
         origClass,
@@ -147,8 +132,6 @@ function mouseMove(ev) {
             // Record the mouse x and y offset for the element
             rootParent = curTarget.parentNode;
             rootSibling = curTarget.nextSibling;
-
-            mouseOffset = getMouseOffset(target, ev);
 
             // Remove anything that is in the dragHelper div so we can put a new item in it
             for (i = 0; i < dragHelper.childNodes.length; i += 1) {
@@ -211,82 +194,54 @@ function mouseMove(ev) {
 
     // If we get in here we are dragging something
     if (curTarget) {
-        // Move helper div to wherever the mouse is (adjusted by mouseOffset)
-        dragHelper.style.top = mousePos.y - mouseOffset.y + 'px';
-        dragHelper.style.left = mousePos.x - mouseOffset.x + 'px';
+        // Move helper div to wherever the mouse is
+        dragHelper.style.top = mousePos.y + 'px';
+        dragHelper.style.left = mousePos.x + 'px';
 
         dragConts = DragDrops[curTarget.getAttribute('DragObj')];
 
-        var activeCont = null,
-            xPos = mousePos.x - mouseOffset.x + (parseInt(curTarget.getAttribute('startWidth'), 10) / 2),
-            yPos = mousePos.y - mouseOffset.y + (parseInt(curTarget.getAttribute('startHeight'), 10) / 2);
+        var xPos = mousePos.x + (parseInt(curTarget.getAttribute('startWidth'), 10) / 2),
+            yPos = mousePos.y + (parseInt(curTarget.getAttribute('startHeight'), 10) / 2);
 
         // Check each drop container to see if target object is "inside" the container
         for (i = 0; i < dragConts.length; i += 1) {
-            elementInstance = dragConts[i];
+            activeCont = dragConts[i];
+        }
 
-            if ((parseInt(elementInstance.getAttribute('startLeft'), 10) < xPos) && (parseInt(elementInstance.getAttribute('startTop'), 10) < yPos) && ((parseInt(elementInstance.getAttribute('startLeft'), 10) + parseInt(elementInstance.getAttribute('startWidth'), 10)) > xPos) && ((parseInt(elementInstance.getAttribute('startTop'), 10) + parseInt(elementInstance.getAttribute('startHeight'), 10)) > yPos)) {
-                // Target is inside container so save the container into the activeCont variable
-                // Then exit the loop since we no longer need to check the rest of the containers
-                activeCont = dragConts[i];
+		// beforeNode will hold the first node AFTER where div belongs
+		var beforeNode = null;
 
-                break;
+		// Loop through each child node (skipping text nodes)
+        for (i = activeCont.childNodes.length - 1; i >= 0; i -= 1) {
+            elementInstance = activeCont.childNodes[i];
+
+            if (elementInstance.nodeName === '#text') {
+                continue;
+            }
+
+            // If the current item is "After" the item being dragged
+            if (curTarget !== activeCont.childNodes[i] && ((parseInt(elementInstance.getAttribute('startLeft'), 10) + parseInt(elementInstance.getAttribute('startWidth'), 10)) > xPos) && ((parseInt(elementInstance.getAttribute('startTop'), 10) + parseInt(elementInstance.getAttribute('startHeight'), 10)) > yPos)) {
+                beforeNode = activeCont.childNodes[i];
             }
         }
 
-		// Target object is in one of the containers
-        // Check to see where the div belongs
-		if (activeCont) {
-			// beforeNode will hold the first node AFTER where div belongs
-			var beforeNode = null;
+		// The item being dragged belongs before another item
+		if (beforeNode) {
+            if (beforeNode !== curTarget.nextSibling) {
+                activeCont.insertBefore(curTarget, beforeNode);
+            }
+		// The item being dragged belongs at the end of the current container
+		} else {
+            if ((curTarget.nextSibling) || (curTarget.parentNode !== activeCont)) {
+                activeCont.appendChild(curTarget);
+            }
+        }
 
-			// Loop through each child node (skipping text nodes)
-            for (i = activeCont.childNodes.length - 1; i >= 0; i -= 1) {
-                elementInstance = activeCont.childNodes[i];
-
-                if (elementInstance.nodeName === '#text') {
-                    continue;
-                }
-
-				// If the current item is "After" the item being dragged
-				if (curTarget !== activeCont.childNodes[i] && ((parseInt(elementInstance.getAttribute('startLeft'), 10) + parseInt(elementInstance.getAttribute('startWidth'), 10)) > xPos) && ((parseInt(elementInstance.getAttribute('startTop'), 10) + parseInt(elementInstance.getAttribute('startHeight'), 10)) > yPos)) {
-                    beforeNode = activeCont.childNodes[i];
-				}
-			}
-
-			// The item being dragged belongs before another item
-			if (beforeNode) {
-				if (beforeNode !== curTarget.nextSibling) {
-					activeCont.insertBefore(curTarget, beforeNode);
-				}
-
-			// The item being dragged belongs at the end of the current container
-			} else {
-				if ((curTarget.nextSibling) || (curTarget.parentNode !== activeCont)) {
-					activeCont.appendChild(curTarget);
-				}
-			}
-
-			// Use timeout because the container doesn't "immediately" resize
-			setTimeout(function () {
-                var contPos = getPosition(activeCont);
-                activeCont.setAttribute('startWidth', parseInt(activeCont.offsetWidth, 10));
-                activeCont.setAttribute('startHeight', parseInt(activeCont.offsetHeight, 10));
-                activeCont.setAttribute('startLeft', contPos.x);
-                activeCont.setAttribute('startTop', contPos.y);
-            }, 5);
-
-            // Make drag item visible
-            if (curTarget.style.display !== '') {
-                curTarget.style.display = '';
-				curTarget.style.visibility = 'hidden';
-			}
-        } else {
-            // Drag item is not in a container, so hide it
-			if (curTarget.style.display !== 'none') {
-				curTarget.style.display = 'none';
-			}
-		}
+        // Make drag item visible
+        if (curTarget.style.display !== '') {
+            curTarget.style.display = '';
+            curTarget.style.visibility = 'hidden';
+        }
     }
 
     // Track the current mouse state so we can compare against it next time
@@ -297,8 +252,8 @@ function mouseMove(ev) {
 
     if (dragObject) {
 		dragObject.style.position = 'absolute';
-		dragObject.style.top = mousePos.y - mouseOffset.y;
-		dragObject.style.left = mousePos.x - mouseOffset.x;
+		dragObject.style.top = mousePos.y;
+		dragObject.style.left = mousePos.x;
 	}
 
     // Track the current mouse state so we can compare against it next time
@@ -312,6 +267,8 @@ function mouseMove(ev) {
 
 function mouseUp() {
     'use strict';
+
+    var dragHelper = document.querySelector('.drag-helper');
 
     if (curTarget) {
         dragHelper.style.display = 'none';
@@ -351,13 +308,14 @@ document.onmousemove = mouseMove;
 document.onmousedown = mouseDown;
 document.onmouseup = mouseUp;
 
-document.addEventListener("DOMContentLoaded", function () {
+window.onload = function () {
     'use strict';
 
     createDragContainer(document.querySelector('.drag-container'));
 
-    dragHelper = document.createElement('div');
+    var dragHelper = document.createElement('div');
     dragHelper.style.cssText = 'position: absolute; display: none;';
+    dragHelper.classList.add('drag-helper');
 
     document.body.appendChild(dragHelper);
-});
+};
