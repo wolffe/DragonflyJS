@@ -5,7 +5,7 @@
 /* global console */
 
 /*
- * DragonflyJS - v1.0.1 - 2018-05-29
+ * DragonflyJS - v1.0.2 - 2018-05-29
  * https://getbutterfly.com/dragonflyjs-vanilla-javascript-drag-and-drop/
  * Copyright (c) 2018 Ciprian Popescu
  * Licensed GPLv3
@@ -145,7 +145,7 @@ function mouseMove(ev) {
             dragHelper.style.display = 'block';
 
             // Set the class on the helper div if necessary
-            dragClass = curTarget.getAttribute('dragClass');
+            dragClass = curTarget.dataset.dragClass;
 
             if (dragClass) {
                 dragHelper.firstChild.className = dragClass;
@@ -210,10 +210,10 @@ function mouseMove(ev) {
             activeCont = dragConts[i];
         }
 
-		// beforeNode will hold the first node AFTER where div belongs
-		var beforeNode = null;
+        // beforeNode will hold the first node AFTER where div belongs
+        var beforeNode = null;
 
-		// Loop through each child node (skipping text nodes)
+        // Loop through each child node (skipping text nodes)
         for (i = activeCont.childNodes.length - 1; i >= 0; i -= 1) {
             elementInstance = activeCont.childNodes[i];
 
@@ -227,13 +227,13 @@ function mouseMove(ev) {
             }
         }
 
-		// The item being dragged belongs before another item
-		if (beforeNode) {
+        // The item being dragged belongs before another item
+        if (beforeNode) {
             if (beforeNode !== curTarget.nextSibling) {
                 activeCont.insertBefore(curTarget, beforeNode);
             }
-		// The item being dragged belongs at the end of the current container
-		} else {
+            // The item being dragged belongs at the end of the current container
+        } else {
             if ((curTarget.nextSibling) || (curTarget.parentNode !== activeCont)) {
                 activeCont.appendChild(curTarget);
             }
@@ -247,22 +247,22 @@ function mouseMove(ev) {
     }
 
     // Track the current mouse state so we can compare against it next time
-	lMouseState = iMouseDown;
+    lMouseState = iMouseDown;
 
     // mouseMove target
-	lastTarget  = target;
+    lastTarget  = target;
 
     if (dragObject) {
-		dragObject.style.position = 'absolute';
-		dragObject.style.top = mousePos.y;
-		dragObject.style.left = mousePos.x;
-	}
+        dragObject.style.position = 'absolute';
+        dragObject.style.top = mousePos.y;
+        dragObject.style.left = mousePos.x;
+    }
 
     // Track the current mouse state so we can compare against it next time
     lMouseState = iMouseDown;
 
     // Prevent items on the page from being highlighted while dragging
-	if (curTarget || dragObject) {
+    if (curTarget || dragObject) {
         return false;
     }
 }
