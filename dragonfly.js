@@ -57,16 +57,18 @@ function getPosition(e) {
         top = 0;
 
     while (e.offsetParent) {
-		left += e.offsetLeft + (e.currentStyle ? (parseInt(e.currentStyle.borderLeftWidth, 10)).NaN0() : 0);
-		top  += e.offsetTop + (e.currentStyle ? (parseInt(e.currentStyle.borderTopWidth, 10)).NaN0() : 0);
-		e = e.offsetParent;
-	}
+        left += e.offsetLeft + (e.currentStyle ? (parseInt(e.currentStyle.borderLeftWidth, 10)).NaN0() : 0);
+        top  += e.offsetTop + (e.currentStyle ? (parseInt(e.currentStyle.borderTopWidth, 10)).NaN0() : 0);
+        e = e.offsetParent;
+    }
 
+    left += e.offsetLeft + (e.currentStyle ? (parseInt(e.currentStyle.borderLeftWidth, 10)).NaN0() : 0);
+    top += e.offsetTop + (e.currentStyle ? (parseInt(e.currentStyle.borderTopWidth, 10)).NaN0() : 0);
 
-	left += e.offsetLeft + (e.currentStyle ? (parseInt(e.currentStyle.borderLeftWidth, 10)).NaN0() : 0);
-	top += e.offsetTop + (e.currentStyle ? (parseInt(e.currentStyle.borderTopWidth, 10)).NaN0() : 0);
-
-	return {x: left, y: top};
+    return {
+        x: left,
+        y: top
+    };
 }
 
 function mouseCoords(ev) {
@@ -77,12 +79,12 @@ function mouseCoords(ev) {
             x: ev.pageX,
             y: ev.pageY
         };
-	}
+    }
 
     return {
-		x: ev.clientX + document.body.scrollLeft - document.body.clientLeft,
-		y: ev.clientY + document.body.scrollTop - document.body.clientTop
-	};
+        x: ev.clientX + document.body.scrollLeft - document.body.clientLeft,
+        y: ev.clientY + document.body.scrollTop - document.body.clientTop
+    };
 }
 
 function mouseMove(ev) {
@@ -149,28 +151,28 @@ function mouseMove(ev) {
                 dragHelper.firstChild.className = dragClass;
             }
 
-			// Disable dragging from the helper div (it's already being dragged)
-			dragHelper.firstChild.removeAttribute('DragObj');
+            // Disable dragging from the helper div (it's already being dragged)
+            dragHelper.firstChild.removeAttribute('DragObj');
 
-			// Record the current position of all drag/drop targets related to the element
-			dragConts = DragDrops[dragObj];
+            // Record the current position of all drag/drop targets related to the element
+            dragConts = DragDrops[dragObj];
 
-			// First record the width/height of the drag item, then hide it since it is going to (potentially) be moved out of its parent
-			curTarget.setAttribute('startWidth', parseInt(curTarget.offsetWidth, 10));
-			curTarget.setAttribute('startHeight', parseInt(curTarget.offsetHeight, 10));
-			curTarget.style.display = 'none';
+            // First record the width/height of the drag item, then hide it since it is going to (potentially) be moved out of its parent
+            curTarget.setAttribute('startWidth', parseInt(curTarget.offsetWidth, 10));
+            curTarget.setAttribute('startHeight', parseInt(curTarget.offsetHeight, 10));
+            curTarget.style.display = 'none';
 
-			// Loop through each possible drop container
+            // Loop through each possible drop container
             for (i = 0; i < dragConts.length; i += 1) {
                 elementInstance = dragConts[i];
 
-				pos = getPosition(dragConts[i]);
+                pos = getPosition(dragConts[i]);
 
-				// Save the width, height and position of each container
-				elementInstance.setAttribute('startWidth', parseInt(elementInstance.offsetWidth, 10));
-				elementInstance.setAttribute('startHeight', parseInt(elementInstance.offsetHeight, 10));
-				elementInstance.setAttribute('startLeft', pos.x);
-				elementInstance.setAttribute('startTop', pos.y);
+                // Save the width, height and position of each container
+                elementInstance.setAttribute('startWidth', parseInt(elementInstance.offsetWidth, 10));
+                elementInstance.setAttribute('startHeight', parseInt(elementInstance.offsetHeight, 10));
+                elementInstance.setAttribute('startLeft', pos.x);
+                elementInstance.setAttribute('startTop', pos.y);
 
                 // Loop through each child element of each container
                 for (j = 0; j < dragConts[i].childNodes.length; j += 1) {
