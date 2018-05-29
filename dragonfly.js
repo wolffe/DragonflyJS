@@ -310,14 +310,20 @@ document.onmousemove = mouseMove;
 document.onmousedown = mouseDown;
 document.onmouseup = mouseUp;
 
-document.addEventListener("DOMContentLoaded", function () {
+function dragonfly(element) {
     'use strict';
 
-    createDragContainer(document.querySelector('.drag-container'));
+    createDragContainer(document.querySelector(element));
 
     var dragHelper = document.createElement('div');
     dragHelper.style.cssText = 'position: absolute; display: none;';
     dragHelper.classList.add('drag-helper');
 
     document.body.appendChild(dragHelper);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    'use strict';
+
+    dragonfly('.drag-container');
 });
