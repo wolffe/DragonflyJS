@@ -14,19 +14,16 @@ body {
     color: #24292e;
     background-color: #ffffff;
 }
-li {
-    margin-bottom: 10px;
-}
-ol {
-    margin-top: 5px;
-}
+
 .drag-container {
+    box-sizing: border-box;
     border: 1px solid #666666;
     width: 400px;
     padding: 8px;
     margin: 2px;
 }
 .drag-box {
+    box-sizing: border-box;
     border: 1px solid #000000;
     padding: 2px;
     margin: 4px;
@@ -37,30 +34,39 @@ ol {
     background-color: #ffff99;
 }
 .drag-box-dragging {
+    box-sizing: border-box;
     border: 1px solid #000000;
     padding: 2px;
     margin: 4px;
     cursor: pointer;
     background-color: #ff99cc;
     opacity: 0.5;
+    transform: scale(1.5);
+}
+.drag-helper {
+    box-sizing: border-box;
+    position: absolute;
+    display: none;
+    top: auto;
+    left: auto;
 }
 </style>
 </head>
 <body>
 
 <div class="drag-container">
-    <div class="drag-box" id="item1" dragclass="drag-box-dragging">Item #1</div>
-    <div class="drag-box" id="item2" dragclass="drag-box-dragging">Item #2</div>
-    <div class="drag-box" id="item3" dragclass="drag-box-dragging">Item #3</div>
-    <div class="drag-box" id="item4" dragclass="drag-box-dragging">Item #4</div>
-    <div class="drag-box" id="item5" dragclass="drag-box-dragging">Item #5</div>
-    <div class="drag-box" id="item6" dragclass="drag-box-dragging">Item #6</div>
-    <div class="drag-box" id="item7" dragclass="drag-box-dragging">Item #7</div>
-    <div class="drag-box" id="item8" dragclass="drag-box-dragging">Item #8</div>
-    <div class="drag-box" id="item9" dragclass="drag-box-dragging">Item #9</div>
-    <div class="drag-box" id="item10" dragclass="drag-box-dragging">Item #10</div>
-    <div class="drag-box" id="item11" dragclass="drag-box-dragging">Item #11</div>
-    <div class="drag-box" id="item12" dragclass="drag-box-dragging">Item #12</div>
+    <div class="drag-box" id="item1" data-drag-class="drag-box-dragging">Item #1</div>
+    <div class="drag-box" id="item2" data-drag-class="drag-box-dragging">Item #2</div>
+    <div class="drag-box" id="item3" data-drag-class="drag-box-dragging">Item #3</div>
+    <div class="drag-box" id="item4" data-drag-class="drag-box-dragging">Item #4</div>
+    <div class="drag-box" id="item5" data-drag-class="drag-box-dragging">Item #5</div>
+    <div class="drag-box" id="item6" data-drag-class="drag-box-dragging">Item #6</div>
+    <div class="drag-box" id="item7" data-drag-class="drag-box-dragging">Item #7</div>
+    <div class="drag-box" id="item8" data-drag-class="drag-box-dragging">Item #8</div>
+    <div class="drag-box" id="item9" data-drag-class="drag-box-dragging">Item #9</div>
+    <div class="drag-box" id="item10" data-drag-class="drag-box-dragging">Item #10</div>
+    <div class="drag-box" id="item11" data-drag-class="drag-box-dragging">Item #11</div>
+    <div class="drag-box" id="item12" data-drag-class="drag-box-dragging">Item #12</div>
 </div>
 
 <script src="dragonfly.js"></script>
