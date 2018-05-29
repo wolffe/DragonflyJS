@@ -5,7 +5,7 @@
 /* global console */
 
 /*
- * DragonflyJS - v1.0.2 - 2018-05-29
+ * DragonflyJS - v1.1.0 - 2018-05-29
  * https://getbutterfly.com/dragonflyjs-vanilla-javascript-drag-and-drop/
  * Copyright (c) 2018 Ciprian Popescu
  * Licensed GPLv3
@@ -102,7 +102,6 @@ function mouseMove(ev) {
         target = ev.target || ev.srcElement,
         mousePos = mouseCoords(ev),
         origClass,
-        dragClass,
         dragConts,
         dragObj,
         pos,
@@ -145,11 +144,7 @@ function mouseMove(ev) {
             dragHelper.style.display = 'block';
 
             // Set the class on the helper div if necessary
-            dragClass = curTarget.dataset.dragClass;
-
-            if (dragClass) {
-                dragHelper.firstChild.className = dragClass;
-            }
+            dragHelper.classList.add('drag-box-dragging');
 
             // Disable dragging from the helper div (it's already being dragged)
             dragHelper.firstChild.removeAttribute('DragObj');
