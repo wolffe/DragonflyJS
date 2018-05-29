@@ -17,15 +17,17 @@ body {
 
 .drag-container {
     box-sizing: border-box;
-    border: 1px solid #666666;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
     width: 400px;
     padding: 8px;
-    margin: 2px;
+    margin: 0 auto;
 }
 .drag-box {
     box-sizing: border-box;
-    border: 1px solid #000000;
-    padding: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+    padding: 4px 8px;
     margin: 4px;
     cursor: pointer;
     background-color: #eeeeee;
@@ -33,17 +35,18 @@ body {
 .drag-box:hover {
     background-color: #ffff99;
 }
-.drag-box-dragging {
-    background-color: #ff99cc;
-    opacity: 0.5;
-    transform: scale(1.5);
-}
+
 .drag-helper {
     box-sizing: border-box;
     position: absolute;
     display: none;
     top: auto;
     left: auto;
+}
+.drag-box-dragging .drag-box {
+    background-color: #ff99cc;
+    opacity: 0.5;
+    transform: scale(1.5);
 }
 </style>
 </head>
