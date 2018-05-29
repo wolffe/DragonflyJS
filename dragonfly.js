@@ -308,7 +308,7 @@ document.onmousemove = mouseMove;
 document.onmousedown = mouseDown;
 document.onmouseup = mouseUp;
 
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", function () {
     'use strict';
 
     createDragContainer(document.querySelector('.drag-container'));
@@ -318,4 +318,4 @@ window.onload = function () {
     dragHelper.classList.add('drag-helper');
 
     document.body.appendChild(dragHelper);
-};
+});
