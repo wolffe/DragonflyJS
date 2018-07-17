@@ -5,7 +5,7 @@
 /* global console */
 
 /*
- * DragonflyJS - v1.1.0 - 2018-05-29
+ * DragonflyJS - v1.2.0 - 2018-07-17
  * https://getbutterfly.com/dragonflyjs-vanilla-javascript-drag-and-drop/
  * Copyright (c) 2018 Ciprian Popescu
  * Licensed GPLv3
@@ -262,7 +262,7 @@ function mouseMove(ev) {
     }
 }
 
-function mouseUp() {
+function mouseUp(callback) {
     'use strict';
 
     var dragHelper = document.querySelector('.drag-helper');
@@ -285,6 +285,9 @@ function mouseUp() {
     iMouseDown = false;
 
     // Add AJAX event here
+    if (typeof callback === 'function') {
+        callback();
+    }
 }
 
 function mouseDown(ev) {
@@ -301,11 +304,7 @@ function mouseDown(ev) {
     }
 }
 
-document.onmousemove = mouseMove;
-document.onmousedown = mouseDown;
-document.onmouseup = mouseUp;
-
-function dragonfly(element) {
+function dragonfly(element, callback) {
     'use strict';
 
     createDragContainer(document.querySelector(element));
@@ -315,10 +314,25 @@ function dragonfly(element) {
     dragHelper.classList.add('drag-helper');
 
     document.body.appendChild(dragHelper);
+
+    document.addEventListener('mousemove', function () {
+        mouseMove();
+    });
+    document.addEventListener('mousedown', function () {
+        mouseDown();
+    });
+    document.addEventListener('mouseup', function () {
+        mouseUp(callback);
+    });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+/**
+ * DragonflyJS Usage
+ */
+document.addEventListener('DOMContentLoaded', function () {
     'use strict';
 
-    dragonfly('.drag-container');
+    dragonfly('.drag-container', function () {
+        console.log('This is a callback');
+    });
 });
